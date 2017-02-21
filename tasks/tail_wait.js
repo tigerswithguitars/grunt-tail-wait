@@ -40,6 +40,7 @@ module.exports = function(grunt) {
       timeout: data.timeout || 30000,
       fromBeginning: data.fromBeginning || false,
       printMatch: data.printMatch || false,
+      callback: data.callback || null,
 
       // This is only needed if the file watched has been
       // completed before the start of this task.
@@ -128,6 +129,10 @@ module.exports = function(grunt) {
 
           if (options.printMatch) {
             grunt.log.write(data);
+          }
+
+          if (options.callback && typeof options.callback === 'function') {
+            options.callback(data);
           }
 
           complete(true);

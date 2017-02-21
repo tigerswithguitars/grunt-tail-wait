@@ -35,6 +35,7 @@ grunt.initConfig({
       fromBeginning: false,           // defaults to false.
       forceWatchFromBeginning: false, // defaults to false.
       printMatch: false,              // defaults to false.
+      callback: null,                 // defaults to null.
     }
   },
 });
@@ -63,6 +64,7 @@ grunt.initConfig({
         fromBeginning: false,           // defaults to false.
         forceWatchFromBeginning: false, // defaults to false.
         printMatch: false,              // defaults to false.
+        callback: null,                 // defaults to null.
       }
     }
   },
@@ -73,6 +75,7 @@ grunt.initConfig({
 1. `fromBeginning` - Specified whether from the first file change detected by the watcher you would like to read the file fro mthe beginning.
 2. `forceWatchFromBeginning` - Forces a file change by writting a Unicode U+0020 to the end of the file. This may be useful if the file you wish to watch may have already been finished writting to. Obviously, be aware this is, although minimally, changing the file.
 3. `printMatch` - Specifies whether the line matching the regex should be printed out to the console.  This may be useful if the logfile contains an id or url that you'd like to print to the console at start up.
+4. `callback` - Optional callback on successful match.  Function takes a single parameter which is the matching line.
 
 
 ### Usage Examples
