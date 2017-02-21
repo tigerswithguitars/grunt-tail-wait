@@ -15,10 +15,10 @@ var fs = require('fs');
 
 
 // Export the gun task function for this module
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
   // Register the task with grunt when loaded.
-  grunt.registerMultiTask('tail_wait', 'Allows grunt to tail a file and wait for a speciic line', function () {
+  grunt.registerMultiTask('tail_wait', 'Allows grunt to tail a file and wait for a speciic line', function() {
 
     // Make our task async.
     var done = this.async();
@@ -40,6 +40,7 @@ module.exports = function (grunt) {
       timeout: data.timeout || 30000,
       fromBeginning: data.fromBeginning || false,
       printMatch: data.printMatch || false,
+      callback: data.callback || null,
 
       // This is only needed if the file watched has been
       // completed before the start of this task.
@@ -65,7 +66,7 @@ module.exports = function (grunt) {
     var tails = [];
 
     // Complete function ends grunt task and cleans up the tail.
-    function complete (isSuccess) {
+    function complete(isSuccess) {
 
       // Stop the timers now we are complete.
       if (timer) {
@@ -98,7 +99,7 @@ module.exports = function (grunt) {
 
     // The processing function for a single file
 
-    var process = function (innerFile) {
+    var process = function(innerFile) {
 
       grunt.verbose.writeln('Tail: Begin. ' + innerFile);
 
@@ -118,7 +119,7 @@ module.exports = function (grunt) {
       tails.push(tail);
 
       // Check the contents of each line tailed.
-      tail.on("line", function (data) {
+      tail.on("line", function(data) {
 
         // Check if the new line matched our desired output.
         if (data.match(regex)) {
@@ -127,7 +128,11 @@ module.exports = function (grunt) {
           grunt.log.ok('Tail: Success. Match found, continuing to next task. ' + innerFile);
 
           if (options.printMatch) {
-              grunt.log.write(data);
+            grunt.log.write(data);
+          }
+
+          if (options.callback && typeof options.callback === 'function') {
+            options.callback(data);
           }
 
           complete(true);
@@ -135,7 +140,7 @@ module.exports = function (grunt) {
       });
 
       // Force the file to flush if it hasn't.
-      intervals.push(setInterval(function () {
+      intervals.push(setInterval(function() {
 
         var fd = fs.openSync(innerFile, 'r');
 
@@ -156,7 +161,7 @@ module.exports = function (grunt) {
 
 
     // Process the whole queue of files.
-    var processQueue = function () {
+    var processQueue = function() {
 
       // Works for multiple files so go and watch them all.
       for (var i = options.fileName.length - 1; i >= 0; i--) {
@@ -175,11 +180,11 @@ module.exports = function (grunt) {
 
 
     // If no files have been initially discovered for pattern, then try to rematch.
-    if (options.fileName.length < 1 && this.data.files){
+    if (options.fileName.length < 1 && this.data.files) {
 
       grunt.verbose.writeln('Tail: Search for files: ' + options.fileName);
 
-      search = setInterval(function () {
+      search = setInterval(function() {
 
         var newFiles = grunt.file.expand(data.files);
 
